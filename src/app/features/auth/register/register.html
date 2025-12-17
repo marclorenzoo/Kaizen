@@ -1,0 +1,77 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+    <div class="w-full max-w-md">
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+
+            <!-- Logo -->
+            <div class="flex items-center justify-center gap-3 mb-8">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
+                    <svg width="24" height="24" fill="currentColor" class="text-white">
+                        <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                        <rect x="3" y="14" width="7" height="7" rx="1.5" opacity="0.5" />
+                        <rect x="14" y="3" width="7" height="7" rx="1.5" opacity="0.5" />
+                        <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                    </svg>
+                </div>
+                <span class="font-bold text-3xl text-gray-900">Kaizen</span>
+            </div>
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h2 class="text-3xl font-bold text-gray-900 mb-2">
+                    Crea tu cuenta
+                </h2>
+                <p class="text-gray-600">
+                    Construye tu mejor versión día a día.
+                </p>
+            </div>
+
+            <!-- Form -->
+            <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+                <input type="text" formControlName="username" placeholder="Nombre de usuario"
+                    class="w-full px-4 py-3 border rounded-lg" />
+
+                <input type="email" formControlName="email" placeholder="Correo electrónico"
+                    class="w-full px-4 py-3 border rounded-lg" />
+
+                <input type="password" formControlName="password" placeholder="Contraseña"
+                    class="w-full px-4 py-3 border rounded-lg" />
+
+                <input type="password" formControlName="confirmPassword" placeholder="Confirmar contraseña"
+                    class="w-full px-4 py-3 border rounded-lg" />
+
+                <p *ngIf="registerForm.errors?.['mismatch'] && registerForm.get('confirmPassword')?.touched"
+                    class="text-red-500 text-sm">
+                    Las contraseñas no coinciden
+                </p>
+
+                <div *ngIf="successMessage" class="bg-green-50 text-green-700 p-3 rounded">
+                    {{ successMessage }}
+                </div>
+
+                <div *ngIf="errorMessage" class="bg-red-50 text-red-700 p-3 rounded">
+                    {{ errorMessage }}
+                </div>
+
+                <button type="submit" [disabled]="loading || registerForm.invalid"
+                    class="w-full bg-gray-900 text-white py-3 rounded-lg">
+                    {{ loading ? 'Registrando...' : 'Registrarse' }}
+                </button>
+            </form>
+
+            <div class="my-6 text-center text-gray-500">O</div>
+
+            <button (click)="signUpWithGoogle()" class="w-full border py-3 rounded-lg">
+                Registrarse con Google
+            </button>
+
+            <p class="text-center mt-6 text-sm">
+                ¿Ya tienes cuenta?
+                <a routerLink="/auth/login" class="text-blue-600 font-semibold">
+                    Inicia sesión
+                </a>
+            </p>
+        </div>
+    </div>
+</div>

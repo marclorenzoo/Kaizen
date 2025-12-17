@@ -1,1 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+@import "primeicons/primeicons.css";
+
+@plugin "daisyui" {
+    themes: light --default;
+}
+
+/* Registrar la fuente local */
+@font-face {
+    font-family: "Outfit";
+    src: url("../public/assets/fonts/Outfit/Outfit-Medium.ttf") format("truetype");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* variable con fallback a sans-serif */
+:root {
+    --font-outfit: "Outfit", sans-serif;
+}
+
+body {
+    font-family: var(--font-outfit);
+}
+
+/* utilidad disponible junto a las utilidades de Tailwind */
+@layer utilities {
+    .font-outfit {
+        font-family: var(--font-outfit);
+    }
+}
