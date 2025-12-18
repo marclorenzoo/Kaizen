@@ -12,4 +12,8 @@ export class Sidebar {
   authService = inject(AuthService);
   currentUser$ = this.authService.currentUser$;
 
+  async handleLogout() {
+    await this.authService.signOut();
+  }
+
 }

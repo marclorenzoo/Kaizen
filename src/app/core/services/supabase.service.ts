@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 import { environment } from '../../../environments/environment';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { ReplaySubject, Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root'
 })
 export class SupabaseService {
     private supabase: SupabaseClient;
-    private currentUserSubject: BehaviorSubject<User | null>;
+    private currentUserSubject: ReplaySubject<User | null>;
     public currentUser$: Observable<User | null>;
+    private _currentUserValue: User | null = null;
+    private sessionLoaded = false;
 
     constructor() {
         // Inicializar cliente Supabase
@@ -18,7 +20,9 @@ export class SupabaseService {
             environment.supabase.key
         );
 
-        this.currentUserSubject = new BehaviorSubject<User | null>(null);
+        // ReplaySubject(1) guarda el último valor y lo emite a nuevos suscriptores
+        // Pero NO emite nada hasta que llamemos a .next() por primera vez
+        this.currentUserSubject = new ReplaySubject<User | null>(1);
         this.currentUser$ = this.currentUserSubject.asObservable();
 
         // Cargar sesión actual al iniciar
@@ -26,17 +30,32 @@ export class SupabaseService {
 
         // Escuchar cambios de autenticación en tiempo real
         this.supabase.auth.onAuthStateChange((event, session) => {
-            this.currentUserSubject.next(session?.user ?? null);
+            this._currentUserValue = session?.user ?? null;
+            this.currentUserSubject.next(this._currentUserValue);
         });
     }
 
     private async loadUser(): Promise<void> {
-        const { data: { session } } = await this.supabase.auth.getSession();
-        this.currentUserSubject.next(session?.user ?? null);
+        try {
+            const { data: { session } } = await this.supabase.auth.getSession();
+            this._currentUserValue = session?.user ?? null;
+            this.sessionLoaded = true;
+            // Solo ahora emitimos el primer valor
+            this.currentUserSubject.next(this._currentUserValue);
+        } catch (error) {
+            console.error('Error loading user session:', error);
+            this._currentUserValue = null;
+            this.sessionLoaded = true;
+            this.currentUserSubject.next(null);
+        }
     }
 
     get currentUserValue(): User | null {
-        return this.currentUserSubject.value;
+        return this._currentUserValue;
+    }
+
+    get isSessionLoaded(): boolean {
+        return this.sessionLoaded;
     }
 
     getClient(): SupabaseClient {
