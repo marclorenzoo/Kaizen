@@ -13,14 +13,14 @@ export class AuthService {
     ) { }
 
     // REGISTRO con email/password
-    async signUp(email: string, password: string, fullName?: string): Promise<AuthResponse> {
+    async signUp(email: string, password: string, username?: string): Promise<AuthResponse> {
         try {
             const { data, error } = await this.supabaseService.getClient().auth.signUp({
                 email,
                 password,
                 options: {
                     data: {
-                        full_name: fullName
+                        username: username
                     },
                     emailRedirectTo: `${window.location.origin}/auth/callback`
                 }
