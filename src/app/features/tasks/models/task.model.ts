@@ -11,6 +11,16 @@ export type TaskPriority = 'baja' | 'media' | 'alta';
 export type TaskClassification = 'atrasadas' | 'hoy' | 'proximas';
 
 /**
+ * Opciones de filtro por fecha
+ */
+export type DateFilterOption = 'hoy' | 'esta_semana' | 'personalizado';
+
+/**
+ * Opciones de filtro por estado
+ */
+export type StatusFilterOption = 'pendientes' | 'completadas' | 'todas';
+
+/**
  * Representa una tarea completa
  * Corresponde a la tabla 'tareas' en Supabase
  */
@@ -77,8 +87,21 @@ export interface TaskCount {
     total: number;
 }
 
+/**
+ * Interface para los filtros de tareas
+ * Todos los campos son opcionales para permitir combinaciones
+ */
 export interface TaskFilters {
-    estado?: 'pendiente' | 'completada';
-    prioridad?: 'alta' | 'media' | 'baja';
-    fecha?: string; // YYYY-MM-DD
+    // Filtro por prioridad (puede ser múltiple)
+    prioridades?: TaskPriority[];
+
+    // Filtro por estado
+    estado?: StatusFilterOption;
+
+    // Filtro por fecha
+    fecha?: DateFilterOption;
+
+    // Si es fecha personalizada, especificar rango
+    fechaInicio?: string; // 'YYYY-MM-DD'
+    fechaFin?: string;    // 'YYYY-MM-DD'
 }

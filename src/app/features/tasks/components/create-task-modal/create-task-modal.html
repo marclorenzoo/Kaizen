@@ -1,0 +1,203 @@
+<!-- Modal usando DaisyUI con estilos personalizados -->
+<style>
+    @keyframes delayedFadeIn {
+        0% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .delayed-error {
+        opacity: 0;
+        animation: delayedFadeIn 0.3s ease-out 1s forwards;
+    }
+</style>
+<dialog id="create_task_modal" class="modal bg-slate-900/40 backdrop-blur-sm">
+    <div class="modal-box max-w-2xl bg-white p-0 rounded-3xl shadow-2xl overflow-visible">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100/50">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7" />
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl text-slate-800 tracking-tight">Crear Nueva Tarea</h3>
+            </div>
+
+            <form method="dialog">
+                <button class="btn btn-sm btn-circle btn-ghost text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                    (click)="closeModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </form>
+        </div>
+
+        <!-- Formulario -->
+        <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5 px-8 py-6">
+
+            <!-- Título de la tarea -->
+            <div class="form-control w-full">
+                <label class="label px-0 pt-0 pb-2">
+                    <span class="label-text text-sm font-semibold text-slate-700">Título de la tarea</span>
+                </label>
+                <input type="text" placeholder="Ej. Preparar presentación Q4"
+                    class="input w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 placeholder:text-slate-400 h-12 transition-all"
+                    formControlName="titulo"
+                    [class.input-error]="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched" />
+                <label class="label py-1 delayed-error"
+                    *ngIf="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched">
+                    <span class="text-sm font-medium text-red-500">El título es obligatorio</span>
+                </label>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-control w-full">
+                <label class="label px-0 pt-0 pb-2">
+                    <span class="label-text text-sm font-semibold text-slate-700">Descripción</span>
+                </label>
+                <textarea
+                    class="textarea w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 placeholder:text-slate-400 h-32 resize-none transition-all py-3 leading-relaxed"
+                    placeholder="Añade detalles adicionales aquí..." formControlName="descripcion"></textarea>
+            </div>
+
+            <!-- Grid para Fecha y Hora -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Fecha de vencimiento -->
+                <div class="form-control w-full">
+                    <label class="label px-0 pt-0 pb-2">
+                        <span class="label-text text-sm font-semibold text-slate-700">Fecha de vencimiento</span>
+                    </label>
+                    <div class="relative">
+                        <input type="date"
+                            class="input w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 h-12 pr-10 transition-all font-medium"
+                            formControlName="fecha_vencimiento" [min]="minDate"
+                            [class.input-error]="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched"
+                            [class.!border-red-500]="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched" />
+                        <div
+                            class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
+                            <!-- Calendar Icon -->
+
+                        </div>
+                    </div>
+                    <label class="label py-1 delayed-error"
+                        *ngIf="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched">
+                        <span class="text-sm font-medium text-red-500">La fecha es obligatoria</span>
+                    </label>
+                </div>
+
+                <!-- Hora específica -->
+                <div class="form-control w-full" *ngIf="!esTodoElDia">
+                    <label class="label px-0 pt-0 pb-2">
+                        <span class="label-text text-sm font-semibold text-slate-700">Hora específica</span>
+                    </label>
+                    <div class="relative">
+                        <input type="time" placeholder="09:00"
+                            class="input w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 h-12 transition-all font-medium"
+                            formControlName="hora_especifica"
+                            [class.input-error]="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched"
+                            [class.!border-red-500]="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched" />
+                    </div>
+                    <label class="label py-1 delayed-error"
+                        *ngIf="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched">
+                        <span class="text-sm font-medium text-red-500">La hora es obligatoria</span>
+                    </label>
+                </div>
+                <!-- Placeholder vacio si es todo el dia para mantener el grid, opcional, o dejar que el siguiente elemento suba -->
+                <div *ngIf="esTodoElDia" class="hidden md:block"></div>
+            </div>
+
+            <!-- Grid de Toggle y Prioridad -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 items-end">
+
+                <!-- Toggle: ¿Es todo el día? -->
+                <div class="form-control w-full">
+                    <!-- Usamos un container estilo input para alinearlo visualmente -->
+                    <div
+                        class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-4 h-12">
+                        <div class="flex items-center gap-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span class="text-sm font-semibold text-slate-700">¿Es todo el día?</span>
+                        </div>
+                        <input type="checkbox" class="toggle toggle-primary toggle-sm"
+                            formControlName="es_todo_el_dia" />
+                    </div>
+                </div>
+
+                <!-- Prioridad -->
+                <div class="form-control w-full">
+                    <label class="label px-0 pt-0 pb-2">
+                        <span class="label-text text-sm font-semibold text-slate-700">Prioridad</span>
+                    </label>
+                    <div class="grid grid-cols-3 gap-1 bg-slate-100 p-1.5 rounded-xl">
+
+                        <!-- Baja -->
+                        <label
+                            class="cursor-pointer text-center py-1.5 px-3 rounded-lg text-sm font-semibold transition-all duration-200 select-none"
+                            [class.bg-white]="taskForm.get('prioridad')?.value === 'baja'"
+                            [class.shadow-sm]="taskForm.get('prioridad')?.value === 'baja'"
+                            [class.text-slate-700]="taskForm.get('prioridad')?.value === 'baja'"
+                            [class.text-slate-500]="taskForm.get('prioridad')?.value !== 'baja'">
+                            <input type="radio" class="hidden" formControlName="prioridad" value="baja">
+                            Baja
+                        </label>
+
+                        <!-- Media -->
+                        <label
+                            class="cursor-pointer text-center py-1.5 px-3 rounded-lg text-sm font-semibold transition-all duration-200 select-none"
+                            [class.bg-white]="taskForm.get('prioridad')?.value === 'media'"
+                            [class.shadow-sm]="taskForm.get('prioridad')?.value === 'media'"
+                            [class.text-slate-700]="taskForm.get('prioridad')?.value === 'media'"
+                            [class.text-slate-500]="taskForm.get('prioridad')?.value !== 'media'">
+                            <input type="radio" class="hidden" formControlName="prioridad" value="media">
+                            Media
+                        </label>
+
+                        <!-- Alta -->
+                        <label
+                            class="cursor-pointer text-center py-1.5 px-3 rounded-lg text-sm font-semibold transition-all duration-200 select-none"
+                            [class.bg-white]="taskForm.get('prioridad')?.value === 'alta'"
+                            [class.shadow-sm]="taskForm.get('prioridad')?.value === 'alta'"
+                            [class.text-slate-700]="taskForm.get('prioridad')?.value === 'alta'"
+                            [class.text-slate-500]="taskForm.get('prioridad')?.value !== 'alta'">
+                            <input type="radio" class="hidden" formControlName="prioridad" value="alta">
+                            Alta
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de acción -->
+            <div class="flex items-center justify-between pt-6 mt-2 border-t border-gray-50">
+                <button type="button"
+                    class="btn btn-ghost hover:bg-slate-100 text-slate-500 px-6 rounded-xl font-medium normal-case"
+                    (click)="closeModal()">
+                    Cancelar
+                </button>
+                <button type="submit"
+                    class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-8 rounded-xl font-medium border-none shadow-lg shadow-indigo-200 normal-case disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none"
+                    [disabled]="taskForm.invalid">
+                    Crear Tarea
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Backdrop manual si es necesario, pero el dialog modal suele manejarlo. DaisyUI usa method="dialog" -->
+    <form method="dialog" class="modal-backdrop bg-slate-900/40 backdrop-blur-sm">
+        <button class="cursor-default" (click)="closeModal()">close</button>
+    </form>
+</dialog>

@@ -16,13 +16,16 @@ export class TasksService {
 
   constructor(private supabaseService: SupabaseService) { }
 
+  // ============================================
+  // CRUD BÁSICO
+  // ============================================
+
   /**
-   * 1. Crea una nueva tarea
+   * Crea una nueva tarea
    * Asigna automáticamente el usuario_id del usuario autenticado
    */
   async createTask(dto: CreateTaskDto): Promise<Task | null> {
     try {
-      // Obtener el usuario actual
       const user = this.supabaseService.currentUserValue;
 
       if (!user) {
@@ -30,16 +33,15 @@ export class TasksService {
         return null;
       }
 
-      // Insertar la tarea en Supabase
       const { data, error } = await this.supabaseService
         .getClient()
         .from('tareas')
         .insert({
           ...dto,
-          usuario_id: user.id, // Asignamos el usuario automáticamente
+          usuario_id: user.id,
         })
-        .select() // Para que nos devuelva la tarea creada
-        .single(); // Esperamos un solo registro
+        .select()
+        .single();
 
       if (error) {
         console.error('Error al crear tarea:', error);
@@ -53,9 +55,11 @@ export class TasksService {
     }
   }
 
+  /**
+   * Actualiza una tarea existente
+   */
   async updateTask(id: string, dto: UpdateTaskDto): Promise<Task | null> {
     try {
-      // Obtener el usuario actual
       const user = this.supabaseService.currentUserValue;
 
       if (!user) {
@@ -63,7 +67,6 @@ export class TasksService {
         return null;
       }
 
-      // Insertar la tarea en Supabase
       const { data, error } = await this.supabaseService
         .getClient()
         .from('tareas')
@@ -72,8 +75,8 @@ export class TasksService {
         })
         .eq('id', id)
         .eq('usuario_id', user.id)
-        .select() // Para que nos devuelva la tarea creada
-        .single(); // Esperamos un solo registro
+        .select()
+        .single();
 
       if (error) {
         console.error('Error al actualizar tarea:', error);
@@ -85,12 +88,13 @@ export class TasksService {
       console.error('Error inesperado al actualizar tarea:', error);
       return null;
     }
-
   }
 
+  /**
+   * Elimina una tarea
+   */
   async deleteTask(id: string): Promise<Task | null> {
     try {
-      // Obtener el usuario actual
       const user = this.supabaseService.currentUserValue;
 
       if (!user) {
@@ -98,15 +102,14 @@ export class TasksService {
         return null;
       }
 
-      // Insertar la tarea en Supabase
       const { data, error } = await this.supabaseService
         .getClient()
         .from('tareas')
         .delete()
         .eq('id', id)
         .eq('usuario_id', user.id)
-        .select() // Para que nos devuelva la tarea creada
-        .single(); // Esperamos un solo registro
+        .select()
+        .single();
 
       if (error) {
         console.error('Error al eliminar tarea:', error);
@@ -121,93 +124,8 @@ export class TasksService {
   }
 
   /**
- * Obtiene todas las tareas del usuario actual (completadas y sin completar)
- * Ordenadas por fecha de vencimiento ascendente
- * NOTA: Esta función ahora trae TODAS las tareas para poder clasificar correctamente
- */
-  async getAllTasksForClassification(): Promise<Task[]> {
-    try {
-      const user = this.supabaseService.currentUserValue;
-
-      if (!user) {
-        console.error('No hay usuario autenticado');
-        return [];
-      }
-
-      const { data, error } = await this.supabaseService
-        .getClient()
-        .from('tareas')
-        .select('*')
-        .eq('usuario_id', user.id) // Solo tareas del usuario
-        .order('fecha_vencimiento', { ascending: true }); // Más cercanas primero
-
-      if (error) {
-        console.error('Error al obtener tareas:', error);
-        return [];
-      }
-
-      return (data as Task[]) || [];
-    } catch (error) {
-      console.error('Error inesperado al obtener tareas:', error);
-      return [];
-    }
-  }
-
-  /**
-   * Clasifica tareas por fecha con la lógica correcta:
-   * - Atrasadas: Fecha < hoy Y NO completadas
-   * - Hoy: Fecha = hoy (completadas y sin completar)
-   * - Próximas: Fecha > hoy Y NO completadas
+   * Alterna el estado de completado de una tarea
    */
-  private classifyTasksByDate(tasks: Task[]): ClassifiedTasks {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0); // Inicio del día de hoy (00:00:00)
-
-    const manana = new Date(hoy);
-    manana.setDate(manana.getDate() + 1); // Inicio del día de mañana
-
-    return {
-      // Atrasadas: Antes de hoy Y sin completar
-      atrasadas: tasks.filter((task) => {
-        const fechaTarea = new Date(task.fecha_vencimiento);
-        return fechaTarea < hoy && !task.completada;
-      }),
-
-      // Hoy: Fecha de hoy (TODAS, completadas y sin completar)
-      hoy: tasks.filter((task) => {
-        const fechaTarea = new Date(task.fecha_vencimiento);
-        return fechaTarea >= hoy && fechaTarea < manana;
-      }),
-
-      // Próximas: Después de hoy Y sin completar
-      proximas: tasks.filter((task) => {
-        const fechaTarea = new Date(task.fecha_vencimiento);
-        return fechaTarea >= manana && !task.completada;
-      }),
-    };
-  }
-
-  /**
-   * Obtiene las tareas clasificadas con la nueva lógica
-   * ESTA ES LA FUNCIÓN PRINCIPAL que usarás en el componente
-   */
-  async getClassifiedTasks(): Promise<ClassifiedTasks> {
-    try {
-      // Ahora obtenemos TODAS las tareas (no solo las no completadas)
-      const allTasks = await this.getAllTasksForClassification();
-
-      // Las clasificamos según las reglas del diseño
-      return this.classifyTasksByDate(allTasks);
-    } catch (error) {
-      console.error('Error al obtener tareas clasificadas:', error);
-      return {
-        atrasadas: [],
-        hoy: [],
-        proximas: [],
-      };
-    }
-  }
-
   async toggleTaskCompletion(id: string): Promise<Task | null> {
     try {
       const user = this.supabaseService.currentUserValue;
@@ -221,7 +139,7 @@ export class TasksService {
       const { data: currentTask, error: fetchError } = await this.supabaseService
         .getClient()
         .from('tareas')
-        .select('completada')  // Solo necesitamos el campo 'completada'
+        .select('completada')
         .eq('id', id)
         .eq('usuario_id', user.id)
         .single();
@@ -253,34 +171,44 @@ export class TasksService {
     }
   }
 
-  /**
- * Obtiene el conteo de tareas por categoría
- * Útil para mostrar badges con números en la interfaz
- */
-  async getTaskCount(): Promise<TaskCount> {
-    try {
-      const classified = await this.getClassifiedTasks();
+  // ============================================
+  // OBTENCIÓN DE TAREAS
+  // ============================================
 
-      return {
-        atrasadas: classified.atrasadas.length,
-        hoy: classified.hoy.length,
-        proximas: classified.proximas.length,
-        total: classified.atrasadas.length + classified.hoy.length + classified.proximas.length
-      };
+  /**
+   * Obtiene todas las tareas del usuario actual (completadas y sin completar)
+   * Ordenadas por fecha de vencimiento ascendente
+   */
+  private async getAllTasksForClassification(): Promise<Task[]> {
+    try {
+      const user = this.supabaseService.currentUserValue;
+
+      if (!user) {
+        console.error('No hay usuario autenticado');
+        return [];
+      }
+
+      const { data, error } = await this.supabaseService
+        .getClient()
+        .from('tareas')
+        .select('*')
+        .eq('usuario_id', user.id)
+        .order('fecha_vencimiento', { ascending: true });
+
+      if (error) {
+        console.error('Error al obtener tareas:', error);
+        return [];
+      }
+
+      return (data as Task[]) || [];
     } catch (error) {
-      console.error('Error al obtener conteo de tareas:', error);
-      return {
-        atrasadas: 0,
-        hoy: 0,
-        proximas: 0,
-        total: 0
-      };
+      console.error('Error inesperado al obtener tareas:', error);
+      return [];
     }
   }
 
   /**
    * Obtiene una tarea específica por su ID
-   * Solo si pertenece al usuario autenticado
    */
   async getTaskById(id: string): Promise<Task | null> {
     try {
@@ -329,8 +257,8 @@ export class TasksService {
         .from('tareas')
         .select('*')
         .eq('usuario_id', user.id)
-        .eq('completada', true) // Solo las completadas
-        .order('updated_at', { ascending: false }); // Más recientes primero
+        .eq('completada', true)
+        .order('updated_at', { ascending: false });
 
       if (error) {
         console.error('Error al obtener tareas completadas:', error);
@@ -344,55 +272,195 @@ export class TasksService {
     }
   }
 
-  async getTasks(filters?: TaskFilters): Promise<Task[]> {
+  // ============================================
+  // CLASIFICACIÓN DE TAREAS
+  // ============================================
+
+  /**
+   * Clasifica tareas por fecha con la lógica correcta:
+   * - Atrasadas: Fecha < hoy Y NO completadas
+   * - Hoy: Fecha = hoy (completadas y sin completar)
+   * - Próximas: Fecha > hoy Y NO completadas
+   */
+  private classifyTasksByDate(tasks: Task[]): ClassifiedTasks {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
+
+    const manana = new Date(hoy);
+    manana.setDate(manana.getDate() + 1);
+
+    return {
+      atrasadas: tasks.filter((task) => {
+        const fechaTarea = new Date(task.fecha_vencimiento);
+        return fechaTarea < hoy && !task.completada;
+      }),
+
+      hoy: tasks.filter((task) => {
+        const fechaTarea = new Date(task.fecha_vencimiento);
+        return fechaTarea >= hoy && fechaTarea < manana;
+      }),
+
+      proximas: tasks.filter((task) => {
+        const fechaTarea = new Date(task.fecha_vencimiento);
+        return fechaTarea >= manana && !task.completada;
+      }),
+    };
+  }
+
+  /**
+   * Obtiene las tareas clasificadas (sin filtros)
+   */
+  async getClassifiedTasks(): Promise<ClassifiedTasks> {
     try {
-      const user = this.supabaseService.currentUserValue;
-
-      if (!user) {
-        console.error('No hay usuario autenticado');
-        return [];
-      }
-
-      let query = this.supabaseService
-        .getClient()
-        .from('tareas')
-        .select('*')
-        .eq('usuario_id', user.id);
-
-      // 🟣 FILTRO POR ESTADO
-      if (filters?.estado) {
-        query = query.eq(
-          'completada',
-          filters.estado === 'completada'
-        );
-      }
-
-      // 🔴 FILTRO POR PRIORIDAD
-      if (filters?.prioridad) {
-        query = query.eq('prioridad', filters.prioridad);
-      }
-
-      // 📅 FILTRO POR FECHA (día exacto)
-      if (filters?.fecha) {
-        query = query.eq('fecha', filters.fecha);
-        // si usas timestamp:
-        // query = query.gte('fecha', `${filters.fecha}T00:00:00`)
-        //              .lte('fecha', `${filters.fecha}T23:59:59`)
-      }
-
-      const { data, error } = await query.order('fecha', { ascending: true });
-
-      if (error) {
-        console.error('Error al obtener tareas:', error);
-        return [];
-      }
-
-      return data as Task[];
+      const allTasks = await this.getAllTasksForClassification();
+      return this.classifyTasksByDate(allTasks);
     } catch (error) {
-      console.error('Error inesperado:', error);
-      return [];
+      console.error('Error al obtener tareas clasificadas:', error);
+      return {
+        atrasadas: [],
+        hoy: [],
+        proximas: [],
+      };
     }
   }
 
+  // ============================================
+  // FILTRADO DE TAREAS
+  // ============================================
 
+  /**
+   * Filtra tareas según múltiples criterios combinados
+   */
+  private filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
+    let filteredTasks = [...tasks];
+
+    // FILTRO 1: Por prioridad (puede ser múltiple)
+    if (filters.prioridades && filters.prioridades.length > 0) {
+      filteredTasks = filteredTasks.filter(task =>
+        filters.prioridades!.includes(task.prioridad)
+      );
+    }
+
+    // FILTRO 2: Por estado (completadas/pendientes/todas)
+    if (filters.estado && filters.estado !== 'todas') {
+      const includeCompleted = filters.estado === 'completadas';
+      filteredTasks = filteredTasks.filter(task =>
+        task.completada === includeCompleted
+      );
+    }
+
+    // FILTRO 3: Por fecha
+    if (filters.fecha) {
+      const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0);
+
+      switch (filters.fecha) {
+        case 'hoy':
+          const manana = new Date(hoy);
+          manana.setDate(manana.getDate() + 1);
+
+          filteredTasks = filteredTasks.filter(task => {
+            const fechaTarea = new Date(task.fecha_vencimiento);
+            return fechaTarea >= hoy && fechaTarea < manana;
+          });
+          break;
+
+        case 'esta_semana':
+          const finSemana = new Date(hoy);
+          finSemana.setDate(finSemana.getDate() + 7);
+
+          filteredTasks = filteredTasks.filter(task => {
+            const fechaTarea = new Date(task.fecha_vencimiento);
+            return fechaTarea >= hoy && fechaTarea < finSemana;
+          });
+          break;
+
+        case 'personalizado':
+          if (filters.fechaInicio) {
+            const inicio = new Date(filters.fechaInicio);
+            filteredTasks = filteredTasks.filter(task => {
+              const fechaTarea = new Date(task.fecha_vencimiento);
+              return fechaTarea >= inicio;
+            });
+          }
+
+          if (filters.fechaFin) {
+            const fin = new Date(filters.fechaFin);
+            fin.setHours(23, 59, 59, 999);
+            filteredTasks = filteredTasks.filter(task => {
+              const fechaTarea = new Date(task.fecha_vencimiento);
+              return fechaTarea <= fin;
+            });
+          }
+          break;
+      }
+    }
+
+    return filteredTasks;
+  }
+
+  /**
+   * Aplica filtros a las tareas ya clasificadas
+   */
+  private filterClassifiedTasks(
+    classifiedTasks: ClassifiedTasks,
+    filters: TaskFilters
+  ): ClassifiedTasks {
+    return {
+      atrasadas: this.filterTasks(classifiedTasks.atrasadas, filters),
+      hoy: this.filterTasks(classifiedTasks.hoy, filters),
+      proximas: this.filterTasks(classifiedTasks.proximas, filters),
+    };
+  }
+
+  /**
+   * Obtiene tareas clasificadas Y filtradas
+   * FUNCIÓN PRINCIPAL para usar en el componente
+   */
+  async getFilteredClassifiedTasks(filters?: TaskFilters): Promise<ClassifiedTasks> {
+    try {
+      const classifiedTasks = await this.getClassifiedTasks();
+
+      if (!filters || Object.keys(filters).length === 0) {
+        return classifiedTasks;
+      }
+
+      return this.filterClassifiedTasks(classifiedTasks, filters);
+    } catch (error) {
+      console.error('Error al obtener tareas filtradas:', error);
+      return {
+        atrasadas: [],
+        hoy: [],
+        proximas: [],
+      };
+    }
+  }
+
+  // ============================================
+  // CONTADORES Y ESTADÍSTICAS
+  // ============================================
+
+  /**
+   * Obtiene el conteo de tareas por categoría
+   */
+  async getTaskCount(): Promise<TaskCount> {
+    try {
+      const classified = await this.getClassifiedTasks();
+
+      return {
+        atrasadas: classified.atrasadas.length,
+        hoy: classified.hoy.length,
+        proximas: classified.proximas.length,
+        total: classified.atrasadas.length + classified.hoy.length + classified.proximas.length
+      };
+    } catch (error) {
+      console.error('Error al obtener conteo de tareas:', error);
+      return {
+        atrasadas: 0,
+        hoy: 0,
+        proximas: 0,
+        total: 0
+      };
+    }
+  }
 }
