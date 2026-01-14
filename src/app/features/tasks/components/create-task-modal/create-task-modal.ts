@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { TasksService } from '../../services/tasks.service';
 import { CreateTaskDto } from '../../models/task.model';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, ɵInternalFormsSharedModule } from "@angular/forms";
@@ -11,6 +11,8 @@ import { CommonModule } from '@angular/common';
   styleUrl: './create-task-modal.scss',
 })
 export class CreateTaskModal {
+
+  @Output() taskCreated = new EventEmitter<void>();
 
   taskForm: FormGroup
 
@@ -80,6 +82,7 @@ export class CreateTaskModal {
 
     if (result) {
       console.log('Tarea creada exitosamente:', result);
+      this.taskCreated.emit();
       this.closeModal();
       this.resetForm();
     } else {

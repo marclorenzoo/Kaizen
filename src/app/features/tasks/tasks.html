@@ -8,4 +8,21 @@
 </button>
 
 <!-- Incluir el componente del modal -->
-<app-create-task-modal></app-create-task-modal>
+<app-create-task-modal (taskCreated)="loadTasks()"></app-create-task-modal>
+
+<div>
+    <h2>Atrasadas ({{ tasks().atrasadas.length }})</h2>
+    <div *ngFor="let task of tasks().atrasadas">
+        <h3>{{task.titulo}}</h3>
+    </div>
+
+    <h2>Hoy ({{ tasks().hoy.length }})</h2>
+    <div *ngFor="let task of tasks().hoy">
+        <h3>{{task.titulo}}</h3>
+    </div>
+
+    <h2>Próximas ({{ tasks().proximas.length }})</h2>
+    <div *ngFor="let task of tasks().proximas">
+        <h3>{{task.titulo}}</h3>
+    </div>
+</div>

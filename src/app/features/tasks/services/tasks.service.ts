@@ -16,14 +16,6 @@ export class TasksService {
 
   constructor(private supabaseService: SupabaseService) { }
 
-  // ============================================
-  // CRUD BÁSICO
-  // ============================================
-
-  /**
-   * Crea una nueva tarea
-   * Asigna automáticamente el usuario_id del usuario autenticado
-   */
   async createTask(dto: CreateTaskDto): Promise<Task | null> {
     try {
       const user = this.supabaseService.currentUserValue;
@@ -323,14 +315,7 @@ export class TasksService {
       };
     }
   }
-
-  // ============================================
-  // FILTRADO DE TAREAS
-  // ============================================
-
-  /**
-   * Filtra tareas según múltiples criterios combinados
-   */
+  
   private filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
     let filteredTasks = [...tasks];
 

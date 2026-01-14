@@ -14,6 +14,10 @@
         opacity: 0;
         animation: delayedFadeIn 0.3s ease-out 1s forwards;
     }
+
+    .delayed-input-error {
+        transition: border-color 0.3s ease-out 1s, box-shadow 0.2s ease-out 0s !important;
+    }
 </style>
 <dialog id="create_task_modal" class="modal bg-slate-900/40 backdrop-blur-sm">
     <div class="modal-box max-w-2xl bg-white p-0 rounded-3xl shadow-2xl overflow-visible">
@@ -46,15 +50,17 @@
         <form [formGroup]="taskForm" (ngSubmit)="onSubmit()" class="flex flex-col gap-5 px-8 py-6">
 
             <!-- Título de la tarea -->
-            <div class="form-control w-full">
+            <div class="form-control w-full relative pb-7">
                 <label class="label px-0 pt-0 pb-2">
                     <span class="label-text text-sm font-semibold text-slate-700">Título de la tarea</span>
                 </label>
                 <input type="text" placeholder="Ej. Preparar presentación Q4"
                     class="input w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 placeholder:text-slate-400 h-12 transition-all"
                     formControlName="titulo"
-                    [class.input-error]="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched" />
-                <label class="label py-1 delayed-error"
+                    [class.input-error]="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched"
+                    [class.!border-red-500]="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched"
+                    [class.delayed-input-error]="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched" />
+                <label class="label py-1 delayed-error absolute bottom-0 left-0 w-full"
                     *ngIf="taskForm.get('titulo')?.invalid && taskForm.get('titulo')?.touched">
                     <span class="text-sm font-medium text-red-500">El título es obligatorio</span>
                 </label>
@@ -73,7 +79,7 @@
             <!-- Grid para Fecha y Hora -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <!-- Fecha de vencimiento -->
-                <div class="form-control w-full">
+                <div class="form-control w-full relative pb-7">
                     <label class="label px-0 pt-0 pb-2">
                         <span class="label-text text-sm font-semibold text-slate-700">Fecha de vencimiento</span>
                     </label>
@@ -82,21 +88,22 @@
                             class="input w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 h-12 pr-10 transition-all font-medium"
                             formControlName="fecha_vencimiento" [min]="minDate"
                             [class.input-error]="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched"
-                            [class.!border-red-500]="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched" />
+                            [class.!border-red-500]="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched"
+                            [class.delayed-input-error]="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched" />
                         <div
                             class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none text-slate-400">
                             <!-- Calendar Icon -->
 
                         </div>
                     </div>
-                    <label class="label py-1 delayed-error"
+                    <label class="label py-1 delayed-error absolute bottom-0 left-0 w-full"
                         *ngIf="taskForm.get('fecha_vencimiento')?.invalid && taskForm.get('fecha_vencimiento')?.touched">
                         <span class="text-sm font-medium text-red-500">La fecha es obligatoria</span>
                     </label>
                 </div>
 
                 <!-- Hora específica -->
-                <div class="form-control w-full" *ngIf="!esTodoElDia">
+                <div class="form-control w-full relative pb-7" *ngIf="!esTodoElDia">
                     <label class="label px-0 pt-0 pb-2">
                         <span class="label-text text-sm font-semibold text-slate-700">Hora específica</span>
                     </label>
@@ -105,9 +112,10 @@
                             class="input w-full bg-slate-50 border-slate-100 focus:bg-white focus:border-indigo-500 rounded-xl text-slate-700 h-12 transition-all font-medium"
                             formControlName="hora_especifica"
                             [class.input-error]="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched"
-                            [class.!border-red-500]="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched" />
+                            [class.!border-red-500]="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched"
+                            [class.delayed-input-error]="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched" />
                     </div>
-                    <label class="label py-1 delayed-error"
+                    <label class="label py-1 delayed-error absolute bottom-0 left-0 w-full"
                         *ngIf="taskForm.get('hora_especifica')?.invalid && taskForm.get('hora_especifica')?.touched">
                         <span class="text-sm font-medium text-red-500">La hora es obligatoria</span>
                     </label>
@@ -121,6 +129,9 @@
 
                 <!-- Toggle: ¿Es todo el día? -->
                 <div class="form-control w-full">
+                    <label class="label px-0 pt-0 pb-2">
+                        <span class="label-text text-sm font-semibold text-slate-700">¿Es todo el día?</span>
+                    </label>
                     <!-- Usamos un container estilo input para alinearlo visualmente -->
                     <div
                         class="flex items-center justify-between bg-slate-50 border border-slate-100 rounded-xl px-4 h-12">
