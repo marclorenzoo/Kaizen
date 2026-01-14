@@ -1,0 +1,49 @@
+<div class="card bg-base-100 shadow-sm hover:shadow-md transition-shadow">
+    <div class="card-body p-4">
+
+        <!-- Header: Checkbox + Título -->
+        <div class="flex items-start gap-3">
+            <input type="checkbox" class="checkbox checkbox-primary mt-1" [checked]="task.completada" />
+
+            <div class="flex-1">
+                <h3 class="font-semibold text-base" [class.line-through]="task.completada"
+                    [class.text-base-content/50]="task.completada">
+                    {{ task.titulo }}
+                </h3>
+
+                @if (task.descripcion) {
+                <p class="text-sm text-base-content/70 mt-1">
+                    {{ task.descripcion }}
+                </p>
+                }
+            </div>
+        </div>
+
+        <!-- Footer: Fecha + Prioridad -->
+        <div class="flex items-center justify-between mt-3">
+
+            <!-- Fecha/Hora -->
+            <div class="flex items-center gap-1.5 text-sm" [class]="dateInfo.color">
+                <!-- Aquí necesitarás los iconos SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                    @if (dateInfo.icon === 'calendar') {
+                    <path fill-rule="evenodd"
+                        d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                        clip-rule="evenodd" />
+                    } @else {
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z"
+                        clip-rule="evenodd" />
+                    }
+                </svg>
+                <span>{{ dateInfo.text }}</span>
+            </div>
+
+            <!-- Prioridad -->
+            <div class="badge badge-soft {{ priorityConfig.class }}">
+                {{ priorityConfig.label }}
+            </div>
+        </div>
+
+    </div>
+</div>

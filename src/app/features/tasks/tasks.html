@@ -13,16 +13,16 @@
 <div>
     <h2>Atrasadas ({{ tasks().atrasadas.length }})</h2>
     <div *ngFor="let task of tasks().atrasadas">
-        <h3>{{task.titulo}}</h3>
+        <app-task-card [task]="task" classification="atrasadas"></app-task-card>
     </div>
 
-    <h2>Hoy ({{ tasks().hoy.length }})</h2>
+    <h2 class="pt-6">Hoy ({{ tasks().hoy.length }})</h2>
     <div *ngFor="let task of tasks().hoy">
-        <h3>{{task.titulo}}</h3>
+        <app-task-card [task]="task" classification="hoy"></app-task-card>
     </div>
 
-    <h2>Próximas ({{ tasks().proximas.length }})</h2>
+    <h2 class="pt-6">Próximas ({{ tasks().proximas.length }})</h2>
     <div *ngFor="let task of tasks().proximas">
-        <h3>{{task.titulo}}</h3>
+        <app-task-card [task]="task" classification="proximas"></app-task-card>
     </div>
 </div>
