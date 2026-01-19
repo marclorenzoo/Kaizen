@@ -3,11 +3,11 @@ import { CreateTaskModal } from "./components/create-task-modal/create-task-moda
 import { TasksService } from './services/tasks.service';
 import { ClassifiedTasks } from './models/task.model';
 import { CommonModule } from '@angular/common';
-import { TaskCard } from "./components/task-card/task-card";
+import { TaskColumn } from "./components/task-column/task-column";
 
 @Component({
   selector: 'app-tasks',
-  imports: [CreateTaskModal, CommonModule, TaskCard],
+  imports: [CreateTaskModal, CommonModule, TaskColumn],
   templateUrl: './tasks.html',
   styleUrl: './tasks.scss',
 })

@@ -1,0 +1,40 @@
+<div class="h-full flex flex-col bg-gray-50/50 rounded-2xl border-[1.5px] border-gray-200 p-4 min-h-0">
+    <!-- Header de la columna -->
+    <div class="flex items-center justify-between mb-4 px-1 flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <div class="w-2 h-2 rounded-full" [style.background-color]="color"></div>
+            <h2 class="font-bold text-gray-800 text-lg tracking-tight">{{ title }}</h2>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold" [ngClass]="badgeClass">
+                {{ tasks.length }}
+            </span>
+        </div>
+
+        <button class="btn btn-ghost btn-xs btn-circle text-gray-400 hover:text-gray-600">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+            </svg>
+        </button>
+    </div>
+
+    <!-- Lista de tareas con scroll -->
+    <div class="flex-1 overflow-y-auto flex flex-col gap-3 min-h-0 pr-2 -mr-2">
+        <app-task-card *ngFor="let task of tasks" [task]="task" [classification]="classification">
+        </app-task-card>
+    </div>
+
+    <!-- Botón 'Añadir Tarea' -->
+    <div class="mt-4 flex-shrink-0">
+        <button
+            class="w-full flex items-center justify-center gap-2 py-3 rounded-xl border-[1.5px] border-dashed border-slate-300 text-slate-500 font-medium hover:bg-white hover:border-slate-400 hover:text-slate-600 hover:shadow-sm transition-all group">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-slate-500"
+                viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd"
+                    d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
+                    clip-rule="evenodd" />
+            </svg>
+            Añadir Tarea
+        </button>
+    </div>
+</div>

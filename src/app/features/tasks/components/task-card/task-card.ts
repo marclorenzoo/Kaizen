@@ -115,9 +115,9 @@ export class TaskCard {
    */
   get priorityConfig() {
     const config = {
-      baja: { class: 'badge-info', label: 'Baja' },
-      media: { class: 'badge-warning', label: 'Media' },
-      alta: { class: 'badge-error', label: 'Alta' }
+      baja: { class: 'bg-blue-50 text-blue-700 border-0 ring-1 ring-blue-700/10', label: 'Baja' },
+      media: { class: 'bg-yellow-50 text-yellow-700 border-0 ring-1 ring-yellow-700/10', label: 'Media' },
+      alta: { class: 'bg-red-50 text-red-700 border-0 ring-1 ring-red-700/10', label: 'Alta' }
     };
     return config[this.task.prioridad];
   }
