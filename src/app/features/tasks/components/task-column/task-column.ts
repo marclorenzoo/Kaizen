@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Task } from '../../models/task.model';
 import { TaskCard } from "../task-card/task-card";
 import { CommonModule } from '@angular/common';
@@ -15,5 +15,10 @@ export class TaskColumn {
   @Input() classification: 'atrasadas' | 'hoy' | 'proximas' = 'hoy';
   @Input() color: string = 'blue';
   @Input() badgeClass: string = '';
+  @Output() taskUpdated = new EventEmitter<void>();
+
+  onTaskUpdated() {
+    this.taskUpdated.emit();
+  }
 
 }

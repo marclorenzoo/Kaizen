@@ -2,21 +2,24 @@
     <div class="card-body p-4">
 
         <!-- Header: Checkbox + Título -->
-        <div class="flex items-start gap-3">
-            <input type="checkbox" class="checkbox checkbox-primary mt-1" [checked]="task.completada" />
-
-            <div class="flex-1">
-                <h3 class="font-semibold text-base" [class.line-through]="task.completada"
-                    [class.text-base-content/50]="task.completada">
+        <!-- Header: Título + Checkbox -->
+        <div class="flex items-start justify-between gap-4">
+            <div class="flex-1 min-w-0">
+                <h3 class="font-semibold text-base text-gray-900 leading-tight" [class.line-through]="task.completada"
+                    [class.text-gray-400]="task.completada">
                     {{ task.titulo }}
                 </h3>
 
                 @if (task.descripcion) {
-                <p class="text-sm text-base-content/70 mt-1">
+                <p class="text-sm text-gray-500 mt-1 leading-snug line-clamp-2">
                     {{ task.descripcion }}
                 </p>
                 }
             </div>
+
+            <input type="checkbox"
+                class="checkbox rounded-full border-gray-300 w-6 h-6 [--chkbg:theme(colors.indigo.500)] [--chkfg:white] hover:border-indigo-500 transition-colors mt-0.5"
+                [checked]="task.completada" (click)="onToggleComplete($event)" />
         </div>
 
         <!-- Footer: Fecha + Prioridad -->

@@ -8,11 +8,22 @@ import {
   TaskFilters
 } from '../models/task.model';
 import { SupabaseService } from '../../../core/services/supabase.service';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TasksService {
+
+  private _refreshNeeded = new Subject<void>();
+
+  get refreshNeeded() {
+    return this._refreshNeeded.asObservable();
+  }
+
+  notifyTaskUpdate() {
+    this._refreshNeeded.next();
+  }
 
   constructor(private supabaseService: SupabaseService) { }
 
@@ -289,7 +300,7 @@ export class TasksService {
 
       hoy: tasks.filter((task) => {
         const fechaTarea = new Date(task.fecha_vencimiento);
-        return fechaTarea >= hoy && fechaTarea < manana;
+        return fechaTarea >= hoy && fechaTarea < manana && !task.completada;
       }),
 
       proximas: tasks.filter((task) => {
@@ -315,7 +326,7 @@ export class TasksService {
       };
     }
   }
-  
+
   private filterTasks(tasks: Task[], filters: TaskFilters): Task[] {
     let filteredTasks = [...tasks];
 

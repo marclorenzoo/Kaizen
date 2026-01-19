@@ -1,6 +1,8 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Task, TaskClassification } from '../../models/task.model';
 import { CommonModule } from '@angular/common';
+import { TasksService } from '../../services/tasks.service';
+import { ToastService } from '../../../../core/services/toast.service';
 
 @Component({
   selector: 'app-task-card',
@@ -12,6 +14,50 @@ export class TaskCard {
 
   @Input() task!: Task;
   @Input() classification!: TaskClassification; // 'atrasadas' | 'hoy' | 'proximas'
+  @Output() taskUpdated = new EventEmitter<void>();
+
+  constructor(
+    private tasksService: TasksService,
+    private toastService: ToastService
+  ) { }
+
+  async onToggleComplete(event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+
+    // Prevenir el cambio visual inmediato para manejarlo con la respuesta
+    event.preventDefault();
+
+    try {
+      const updatedTask = await this.tasksService.toggleTaskCompletion(this.task.id);
+
+      if (updatedTask) {
+        // Actualizar visualmente y notificar
+        this.tasksService.notifyTaskUpdate();
+
+        // Mostrar toast con opción de deshacer
+        const title = updatedTask.completada ? 'Tarea completada' : 'Tarea pendiente';
+        const message = updatedTask.completada
+          ? '¡Buen trabajo! Has terminado la tarea.'
+          : 'La tarea ha vuelto a la lista de pendientes.';
+
+        this.toastService.show(title, message, 4000, {
+          label: 'Deshacer',
+          onClick: async () => {
+            // Lógica de deshacer: invocar toggle de nuevo
+            await this.tasksService.toggleTaskCompletion(this.task.id);
+            this.tasksService.notifyTaskUpdate();
+            this.toastService.hide();
+          }
+        });
+
+      } else {
+        console.error('No se pudo actualizar la tarea');
+      }
+    } catch (error) {
+      console.error('Error al actualizar la tarea:', error);
+    }
+  }
+
 
   /**
    * Calcula la información de fecha según la clasificación
