@@ -1,9 +1,12 @@
 <div class="flex h-screen overflow-hidden bg-gray-50">
-  <!-- Sidebar -->
-  <app-sidebar></app-sidebar>
-  
+  <!-- Sidebar - Solo visible en desktop (md y superiores) -->
+  <app-sidebar class="hidden md:block"></app-sidebar>
+
   <!-- Main Content -->
-  <main class="flex-1 overflow-y-auto">
+  <main class="flex-1 overflow-y-auto pb-16 md:pb-0">
     <router-outlet></router-outlet>
   </main>
+
+  <!-- Mobile Dock - Solo visible en mobile (menores a md) -->
+  <app-mobile-dock class="md:hidden"></app-mobile-dock>
 </div>

@@ -23,6 +23,20 @@
         <app-task-card *ngFor="let task of tasks" [task]="task" [classification]="classification"
             (taskUpdated)="onTaskUpdated()">
         </app-task-card>
+
+        <!-- Empty State -->
+        <div *ngIf="tasks.length === 0" class="h-full flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-24 h-24 rounded-full flex items-center justify-center mb-4 transition-colors duration-300"
+                [ngClass]="emptyState.iconBg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" [ngClass]="emptyState.iconColor" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        [attr.d]="emptyState.iconPath" />
+                </svg>
+            </div>
+            <h3 class="font-bold text-gray-900 text-lg mb-1">{{ emptyState.title }}</h3>
+            <p class="text-gray-500 text-sm max-w-[200px]">{{ emptyState.message }}</p>
+        </div>
     </div>
 
     <!-- Botón 'Añadir Tarea' -->

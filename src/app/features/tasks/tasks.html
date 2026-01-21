@@ -1,13 +1,104 @@
 <div class="tasks-container h-full flex flex-col">
+
+    <!-- ================================================= -->
+    <!-- ==================== MOBILE ===================== -->
+    <!-- ================================================= -->
+    <!-- TODO lo que hay aquí está OCULTO en desktop -->
+    <!-- ================================================= -->
+
+    <!-- Header Mobile -->
+    <div class="px-4 pt-6 pb-4 md:hidden">
+        <div class="flex justify-between items-start">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Tareas</h1>
+                <p class="text-sm text-gray-500 mt-1">Hoy, 24 de Octubre</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <!-- Search -->
+                <button class="btn btn-ghost btn-circle btn-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5"
+                        viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M12.9 14.32a8 8 0 111.414-1.414l4.387 4.387a1 1 0 01-1.414 1.414l-4.387-4.387zM14 8a6 6 0 11-12 0 6 6 0 0112 0z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <!-- Avatar -->
+                <div
+                    class="w-9 h-9 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-semibold">
+                    JD
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs Mobile -->
+    <div class="flex gap-6 px-4 mt-2 border-b border-gray-200 md:hidden overflow-x-auto">
+        <button class="pb-3 border-b-2 border-indigo-500 text-indigo-600 font-semibold whitespace-nowrap">
+            Atrasadas
+            <span class="ml-1 text-xs bg-red-100 text-red-600 px-2 py-0.5 rounded-full">3</span>
+        </button>
+
+        <button class="pb-3 text-gray-500 whitespace-nowrap">
+            Hoy
+            <span class="ml-1 text-xs bg-indigo-100 text-indigo-600 px-2 py-0.5 rounded-full">5</span>
+        </button>
+
+        <button class="pb-3 text-gray-500 whitespace-nowrap">
+            Próximas
+        </button>
+
+        <button class="pb-3 text-gray-500 whitespace-nowrap">
+            Pendientes
+        </button>
+    </div>
+
+    <!-- Filtros Mobile -->
+    <div class="flex gap-3 px-4 mt-4 md:hidden overflow-x-auto">
+        <button class="btn btn-outline btn-sm rounded-full">
+            Filtrar
+        </button>
+
+        <button
+            class="btn btn-sm rounded-full bg-red-50 text-red-600 border border-red-200">
+            Prioridad Alta
+        </button>
+
+        <button class="btn btn-sm rounded-full bg-gray-100 text-gray-700">
+            Trabajo
+        </button>
+    </div>
+
+    <!-- Columna Mobile (UNA sola) -->
+    <div class="flex-1 px-4 pb-6 mt-4 overflow-y-auto md:hidden">
+        <app-task-column
+            title="Atrasadas"
+            [tasks]="tasks().atrasadas"
+            classification="atrasadas"
+            color="#EF4444"
+            badgeClass="bg-red-100 text-red-700"
+            (taskUpdated)="loadTasks()"
+            (createTaskClicked)="openCreateTaskModal()">
+        </app-task-column>
+    </div>
+
+    <!-- ================================================= -->
+    <!-- ==================== DESKTOP ==================== -->
+    <!-- ================== (SIN CAMBIOS) ================ -->
+    <!-- ================================================= -->
+
     <!-- Section: Header (Top) -->
-    <div class="header px-8 pt-8 pb-4 flex justify-between items-center">
+    <div class="header px-8 pt-8 pb-4 flex justify-between items-center hidden md:flex">
         <div>
             <h1 class="text-2xl font-bold text-gray-900">Gestión de Tareas</h1>
             <p class="text-gray-500 text-sm mt-1">Organiza tu flujo de trabajo y prioridades.</p>
         </div>
 
         <button class="btn btn-primary btn-sm gap-2" onclick="create_task_modal.showModal()">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4"
+                viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"
                     clip-rule="evenodd" />
@@ -16,60 +107,76 @@
         </button>
     </div>
 
-    <!-- Note: The user mentioned Search/Filters filters are not urgent, so I will placeholders or keep it simple as requested, 
-       but for now I am focusing on the columns below as requested. -->
+    <div class="border-b border-gray-200 w-full mb-6 hidden md:block"></div>
 
-    <div class="border-b border-gray-200 w-full mb-6"></div>
-
-    <!-- Incluir el componente del modal -->
+    <!-- Modal -->
     <app-create-task-modal (taskCreated)="loadTasks()"></app-create-task-modal>
 
-    <!-- Section: Columns (Bottom) - The detailed part -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 px-8 pb-6 overflow-hidden">
-        <app-task-column class="h-full block min-h-0" title="Atrasadas" [tasks]="tasks().atrasadas"
-            classification="atrasadas" color="#EF4444" badgeClass="bg-red-100 text-red-700" (taskUpdated)="loadTasks()"
+    <!-- Columns Desktop -->
+    <div class="hidden md:grid md:grid-cols-3 gap-6 flex-1 px-8 pb-6 overflow-hidden">
+        <app-task-column
+            class="h-full block min-h-0"
+            title="Atrasadas"
+            [tasks]="tasks().atrasadas"
+            classification="atrasadas"
+            color="#EF4444"
+            badgeClass="bg-red-100 text-red-700"
+            (taskUpdated)="loadTasks()"
             (createTaskClicked)="openCreateTaskModal()">
         </app-task-column>
 
-        <app-task-column class="h-full block min-h-0" title="Hoy" [tasks]="tasks().hoy" classification="hoy"
-            color="#6366F1" badgeClass="bg-indigo-100 text-indigo-700" (taskUpdated)="loadTasks()"
+        <app-task-column
+            class="h-full block min-h-0"
+            title="Hoy"
+            [tasks]="tasks().hoy"
+            classification="hoy"
+            color="#6366F1"
+            badgeClass="bg-indigo-100 text-indigo-700"
+            (taskUpdated)="loadTasks()"
             (createTaskClicked)="openCreateTaskModal()">
         </app-task-column>
 
-        <app-task-column class="h-full block min-h-0" title="Próximas" [tasks]="tasks().proximas"
-            classification="proximas" color="#3B82F6" badgeClass="bg-blue-100 text-blue-700" (taskUpdated)="loadTasks()"
+        <app-task-column
+            class="h-full block min-h-0"
+            title="Próximas"
+            [tasks]="tasks().proximas"
+            classification="proximas"
+            color="#3B82F6"
+            badgeClass="bg-blue-100 text-blue-700"
+            (taskUpdated)="loadTasks()"
             (createTaskClicked)="openCreateTaskModal()">
         </app-task-column>
     </div>
 
-
-    <!-- Toast Notification -->
-    <!-- Toast Notification -->
+    <!-- Toast (sin cambios) -->
     @if (toastService.isVisible()) {
     <div class="toast toast-end z-50 mb-4 mr-4">
         <div
             class="flex items-center bg-white rounded-2xl shadow-xl p-4 min-w-[380px] border border-gray-100 animate-slide-up">
 
-            <!-- Icono cículo verde -->
             <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
                 <div class="w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5 text-white stroke-current stroke-[3]"
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                        class="h-3.5 w-3.5 text-white stroke-current stroke-[3]"
                         viewBox="0 0 24 24" fill="none">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        <path stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
             </div>
 
-            <!-- Textos -->
             <div class="ml-4 flex-1">
-                <h3 class="font-bold text-gray-900 text-base leading-tight">{{ toastService.title() }}</h3>
-                <p class="text-gray-500 text-sm mt-0.5 font-medium">{{ toastService.message() }}</p>
+                <h3 class="font-bold text-gray-900 text-base leading-tight">
+                    {{ toastService.title() }}
+                </h3>
+                <p class="text-gray-500 text-sm mt-0.5 font-medium">
+                    {{ toastService.message() }}
+                </p>
             </div>
 
-            <!-- Divisor Vertical -->
             <div class="w-px h-8 bg-gray-200 mx-4"></div>
 
-            <!-- Botón Acción -->
             @if (toastService.action()) {
             <button
                 class="text-indigo-600 font-bold text-sm hover:text-indigo-800 transition-colors pr-2 cursor-pointer"
