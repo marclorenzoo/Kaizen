@@ -27,18 +27,21 @@
     <!-- Section: Columns (Bottom) - The detailed part -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1 px-8 pb-6 overflow-hidden">
         <app-task-column class="h-full block min-h-0" title="Atrasadas" [tasks]="tasks().atrasadas"
-            classification="atrasadas" color="#EF4444" badgeClass="bg-red-100 text-red-700" (taskUpdated)="loadTasks()">
+            classification="atrasadas" color="#EF4444" badgeClass="bg-red-100 text-red-700" (taskUpdated)="loadTasks()"
+            (createTaskClicked)="openCreateTaskModal()">
         </app-task-column>
 
         <app-task-column class="h-full block min-h-0" title="Hoy" [tasks]="tasks().hoy" classification="hoy"
-            color="#6366F1" badgeClass="bg-indigo-100 text-indigo-700" (taskUpdated)="loadTasks()">
+            color="#6366F1" badgeClass="bg-indigo-100 text-indigo-700" (taskUpdated)="loadTasks()"
+            (createTaskClicked)="openCreateTaskModal()">
         </app-task-column>
 
         <app-task-column class="h-full block min-h-0" title="Próximas" [tasks]="tasks().proximas"
-            classification="proximas" color="#3B82F6" badgeClass="bg-blue-100 text-blue-700"
-            (taskUpdated)="loadTasks()">
+            classification="proximas" color="#3B82F6" badgeClass="bg-blue-100 text-blue-700" (taskUpdated)="loadTasks()"
+            (createTaskClicked)="openCreateTaskModal()">
         </app-task-column>
     </div>
+
 
     <!-- Toast Notification -->
     <!-- Toast Notification -->

@@ -16,9 +16,14 @@ export class TaskColumn {
   @Input() color: string = 'blue';
   @Input() badgeClass: string = '';
   @Output() taskUpdated = new EventEmitter<void>();
+  @Output() createTaskClicked = new EventEmitter<void>();
 
   onTaskUpdated() {
     this.taskUpdated.emit();
+  }
+
+  onAddClick() {
+    this.createTaskClicked.emit();
   }
 
 }

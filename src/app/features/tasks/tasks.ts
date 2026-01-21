@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewChild } from '@angular/core';
 import { CreateTaskModal } from "./components/create-task-modal/create-task-modal";
 import { TasksService } from './services/tasks.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -38,7 +38,10 @@ export class Tasks {
     this.tasks.set(classifiedTasks);
   }
 
+  @ViewChild(CreateTaskModal) createTaskModal!: CreateTaskModal;
 
-
+  openCreateTaskModal() {
+    this.createTaskModal.showModal();
+  }
 
 }

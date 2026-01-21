@@ -107,4 +107,11 @@ export class CreateTaskModal {
       es_todo_el_dia: false
     });
   }
+
+  showModal(): void {
+    const modal = document.getElementById('create_task_modal') as HTMLDialogElement;
+    if (modal) {
+      modal.showModal();
+    }
+  }
 }
