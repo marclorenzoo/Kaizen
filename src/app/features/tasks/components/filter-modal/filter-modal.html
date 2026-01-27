@@ -1,0 +1,160 @@
+<!-- Modal de Filtros con estilo consistente -->
+<style>
+    @keyframes modalFadeIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes backdropFadeIn {
+        0% {
+            opacity: 0;
+        }
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .filter-modal-backdrop {
+        animation: backdropFadeIn 0.2s ease-out forwards;
+    }
+
+    .filter-modal-content {
+        animation: modalFadeIn 0.3s ease-out forwards;
+    }
+</style>
+
+@if (isOpen) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm filter-modal-backdrop" 
+     (click)="onClose()">
+  <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-0 overflow-visible filter-modal-content" 
+       (click)="$event.stopPropagation()">
+    
+    <!-- Header -->
+    <div class="flex items-center justify-between px-8 py-6 border-b border-gray-100/50">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z" clip-rule="evenodd" />
+          </svg>
+        </div>
+        <h2 class="font-bold text-xl text-slate-800 tracking-tight">Filtrar Tareas</h2>
+      </div>
+      
+      <button (click)="onClose()" 
+              class="btn btn-sm btn-circle btn-ghost text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Contenido del formulario -->
+    <div class="px-8 py-6 space-y-6">
+      
+      <!-- Prioridad -->
+      <div class="form-control w-full">
+        <label class="label px-0 pt-0 pb-3">
+          <span class="label-text text-sm font-semibold text-slate-700">Prioridad</span>
+        </label>
+        <div class="flex gap-2">
+          <button 
+            type="button"
+            (click)="togglePriority('alta')"
+            [class]="isPrioritySelected('alta') 
+              ? 'btn btn-sm rounded-xl bg-red-50 text-red-600 border-2 border-red-500 hover:bg-red-100 cursor-pointer font-semibold transition-all' 
+              : 'btn btn-sm rounded-xl border-2 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 cursor-pointer font-semibold transition-all'">
+            Alta
+          </button>
+          <button 
+            type="button"
+            (click)="togglePriority('media')"
+            [class]="isPrioritySelected('media') 
+              ? 'btn btn-sm rounded-xl bg-orange-50 text-orange-600 border-2 border-orange-500 hover:bg-orange-100 cursor-pointer font-semibold transition-all' 
+              : 'btn btn-sm rounded-xl border-2 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 cursor-pointer font-semibold transition-all'">
+            Media
+          </button>
+          <button 
+            type="button"
+            (click)="togglePriority('baja')"
+            [class]="isPrioritySelected('baja') 
+              ? 'btn btn-sm rounded-xl bg-slate-100 text-slate-700 border-2 border-slate-400 hover:bg-slate-200 cursor-pointer font-semibold transition-all' 
+              : 'btn btn-sm rounded-xl border-2 border-slate-200 text-slate-600 hover:border-slate-300 hover:bg-slate-50 cursor-pointer font-semibold transition-all'">
+            Baja
+          </button>
+        </div>
+      </div>
+
+      <!-- Fecha -->
+      <div class="form-control w-full">
+        <label class="label px-0 pt-0 pb-3">
+          <span class="label-text text-sm font-semibold text-slate-700">Fecha</span>
+        </label>
+        <div class="space-y-2">
+          <button 
+            type="button"
+            (click)="selectDate('hoy')"
+            [class]="isDateSelected('hoy') 
+              ? 'w-full flex items-center gap-3 p-3.5 rounded-xl bg-indigo-50 border-2 border-indigo-500 cursor-pointer transition-all' 
+              : 'w-full flex items-center gap-3 p-3.5 rounded-xl border-2 border-slate-100 hover:border-slate-200 hover:bg-slate-50 cursor-pointer transition-all'">
+            <div [class]="isDateSelected('hoy') 
+                  ? 'w-9 h-9 rounded-lg bg-indigo-100 flex items-center justify-center' 
+                  : 'w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center'">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   [class]="isDateSelected('hoy') ? 'h-5 w-5 text-indigo-600' : 'h-5 w-5 text-slate-500'" 
+                   viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span [class]="isDateSelected('hoy') ? 'font-semibold text-indigo-900' : 'font-medium text-slate-700'">
+              Hoy
+            </span>
+          </button>
+
+          <button 
+            type="button"
+            (click)="selectDate('esta_semana')"
+            [class]="isDateSelected('esta_semana') 
+              ? 'w-full flex items-center gap-3 p-3.5 rounded-xl bg-indigo-50 border-2 border-indigo-500 cursor-pointer transition-all' 
+              : 'w-full flex items-center gap-3 p-3.5 rounded-xl border-2 border-slate-100 hover:border-slate-200 hover:bg-slate-50 cursor-pointer transition-all'">
+            <div [class]="isDateSelected('esta_semana') 
+                  ? 'w-9 h-9 rounded-lg bg-indigo-100 flex items-center justify-center' 
+                  : 'w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center'">
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                   [class]="isDateSelected('esta_semana') ? 'h-5 w-5 text-indigo-600' : 'h-5 w-5 text-slate-500'" 
+                   viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+              </svg>
+            </div>
+            <span [class]="isDateSelected('esta_semana') ? 'font-semibold text-indigo-900' : 'font-medium text-slate-700'">
+              Esta semana
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex items-center justify-between px-8 py-6 mt-2 border-t border-gray-50">
+      <button 
+        type="button"
+        (click)="onClear()" 
+        class="btn btn-ghost hover:bg-slate-100 text-slate-500 px-6 rounded-xl font-medium normal-case cursor-pointer">
+        Limpiar Todo
+      </button>
+      <button 
+        type="button"
+        (click)="onApply()" 
+        class="btn bg-indigo-600 hover:bg-indigo-700 text-white px-8 rounded-xl font-medium border-none shadow-lg shadow-indigo-200 normal-case cursor-pointer">
+        Aplicar Filtros
+      </button>
+    </div>
+
+  </div>
+</div>
+}

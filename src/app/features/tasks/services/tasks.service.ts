@@ -174,14 +174,6 @@ export class TasksService {
     }
   }
 
-  // ============================================
-  // OBTENCIÓN DE TAREAS
-  // ============================================
-
-  /**
-   * Obtiene todas las tareas del usuario actual (completadas y sin completar)
-   * Ordenadas por fecha de vencimiento ascendente
-   */
   private async getAllTasksForClassification(): Promise<Task[]> {
     try {
       const user = this.supabaseService.currentUserValue;
@@ -242,10 +234,6 @@ export class TasksService {
     }
   }
 
-  /**
-   * Obtiene todas las tareas COMPLETADAS del usuario actual
-   * Ordenadas por fecha de actualización descendente (más recientes primero)
-   */
   async getCompletedTasks(): Promise<Task[]> {
     try {
       const user = this.supabaseService.currentUserValue;
@@ -275,16 +263,6 @@ export class TasksService {
     }
   }
 
-  // ============================================
-  // CLASIFICACIÓN DE TAREAS
-  // ============================================
-
-  /**
-   * Clasifica tareas por fecha con la lógica correcta:
-   * - Atrasadas: Fecha < hoy Y NO completadas
-   * - Hoy: Fecha = hoy (completadas y sin completar)
-   * - Próximas: Fecha > hoy Y NO completadas
-   */
   private classifyTasksByDate(tasks: Task[]): ClassifiedTasks {
     const hoy = new Date();
     hoy.setHours(0, 0, 0, 0);
@@ -310,9 +288,6 @@ export class TasksService {
     };
   }
 
-  /**
-   * Obtiene las tareas clasificadas (sin filtros)
-   */
   async getClassifiedTasks(): Promise<ClassifiedTasks> {
     try {
       const allTasks = await this.getAllTasksForClassification();
