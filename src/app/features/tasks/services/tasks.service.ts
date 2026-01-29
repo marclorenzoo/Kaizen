@@ -407,13 +407,6 @@ export class TasksService {
     }
   }
 
-  // ============================================
-  // CONTADORES Y ESTADÍSTICAS
-  // ============================================
-
-  /**
-   * Obtiene el conteo de tareas por categoría
-   */
   async getTaskCount(): Promise<TaskCount> {
     try {
       const classified = await this.getClassifiedTasks();
