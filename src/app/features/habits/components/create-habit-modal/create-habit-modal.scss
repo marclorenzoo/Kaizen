@@ -1,0 +1,28 @@
+/* Estilos para el modal de crear hábito */
+
+.modal-box {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Animación suave para la expansión del grid de iconos */
+.icon-grid-transition {
+    transition: max-height 0.3s ease-in-out;
+}
+
+/* Estilo para el color picker nativo */
+input[type="color"] {
+    -webkit-appearance: none;
+    appearance: none;
+    border: none;
+    cursor: pointer;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: 50%;
+}
