@@ -1,7 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, EventEmitter, Output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { CreateHabitDto } from '../../models/habits.model';
+import { HabitsService } from '../../services/habits.service';
 
 export interface HabitIcon {
     id: string;
@@ -13,13 +15,14 @@ export type HabitFrequency = 'diaria' | 'semanal' | 'mensual';
 
 @Component({
     selector: 'app-create-habit-modal',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, ReactiveFormsModule],
     templateUrl: './create-habit-modal.html',
     styleUrl: './create-habit-modal.scss',
 })
 export class CreateHabitModal {
 
-    constructor(private sanitizer: DomSanitizer) { }
+    @Output() habitCreated = new EventEmitter<void>();
+    habitForm: FormGroup;
 
     // Estado del modal
     selectedIcon = signal<string>('person');
@@ -27,6 +30,20 @@ export class CreateHabitModal {
     selectedFrequency = signal<HabitFrequency>('diaria');
     showAllIcons = signal<boolean>(false);
     customColor = signal<string>('#6366F1');
+
+    constructor(
+        private sanitizer: DomSanitizer,
+        private fb: FormBuilder,
+        private habitService: HabitsService
+    ) {
+        // ✅ IMPORTANTE: Inicializar con valores por defecto para que el formulario sea válido desde el inicio
+        this.habitForm = this.fb.group({
+            name: ['', [Validators.required]],
+            icon: ['person', [Validators.required]],      // ✅ Valor inicial
+            color: ['#6366F1', [Validators.required]],    // ✅ Valor inicial
+            frequency: ['diaria', [Validators.required]], // ✅ Valor inicial
+        });
+    }
 
     // Colores predefinidos
     presetColors = [
@@ -65,27 +82,31 @@ export class CreateHabitModal {
         { id: 'target', name: 'Foco', svg: '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>' },
     ];
 
-    // Seleccionar icono
+    // ✅ Seleccionar icono - ACTUALIZA SIGNAL Y FORMULARIO
     selectIcon(iconId: string): void {
         this.selectedIcon.set(iconId);
+        this.habitForm.patchValue({ icon: iconId });
     }
 
-    // Seleccionar color predefinido
+    // ✅ Seleccionar color - ACTUALIZA SIGNAL Y FORMULARIO
     selectColor(color: string): void {
         this.selectedColor.set(color);
         this.customColor.set(color);
+        this.habitForm.patchValue({ color: color });
     }
 
-    // Cuando cambia el color picker
+    // ✅ Cuando cambia el color picker - ACTUALIZA SIGNAL Y FORMULARIO
     onColorPickerChange(event: Event): void {
         const input = event.target as HTMLInputElement;
         this.customColor.set(input.value);
         this.selectedColor.set(input.value);
+        this.habitForm.patchValue({ color: input.value });
     }
 
-    // Seleccionar frecuencia
+    // ✅ Seleccionar frecuencia - ACTUALIZA SIGNAL Y FORMULARIO
     selectFrequency(frequency: HabitFrequency): void {
         this.selectedFrequency.set(frequency);
+        this.habitForm.patchValue({ frequency: frequency });
     }
 
     // Toggle mostrar todos los iconos
@@ -130,5 +151,38 @@ export class CreateHabitModal {
         this.selectedFrequency.set('diaria');
         this.showAllIcons.set(false);
         this.customColor.set('#6366F1');
+
+        // ✅ Resetear el formulario con valores por defecto
+        this.habitForm.reset({
+            name: '',
+            icon: 'person',
+            color: '#6366F1',
+            frequency: 'diaria'
+        });
+    }
+
+    async onSubmit(): Promise<void> {
+        if (this.habitForm.invalid) {
+            this.habitForm.markAllAsTouched();
+            return;
+        }
+
+        const habitDto: CreateHabitDto = {
+            nombre: this.habitForm.value.name,
+            icono: this.selectedIcon(),
+            color: this.selectedColor(),
+            frecuencia: this.selectedFrequency(),
+        };
+
+        const result = await this.habitService.createHabit(habitDto);
+
+        if (result) {
+            console.log('Hábito creado exitosamente:', result);
+            this.habitCreated.emit();
+            this.closeModal();
+            this.resetState();
+        } else {
+            console.error('Error al crear el hábito');
+        }
     }
 }
