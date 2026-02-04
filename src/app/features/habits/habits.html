@@ -38,9 +38,47 @@
     <div class="border-b border-gray-200 w-full mb-6 hidden md:block"></div>
 
     <!-- Modal de creación de hábitos -->
-    <app-create-habit-modal></app-create-habit-modal>
+    <app-create-habit-modal (habitCreated)="loadHabits()"></app-create-habit-modal>
+
+    <!-- Modal de edición de hábitos -->
+    <app-edit-habit-modal (habitUpdated)="loadHabits()" (habitDeleted)="loadHabits()"></app-edit-habit-modal>
 
     <!-- TODO: Aquí irá el contenido (Mapa de Constancia, Por hacer hoy, Completado hoy) -->
+
+    <!-- Sección: Por hacer hoy -->
+    <div class="px-4 md:px-8 py-6">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Por hacer hoy</h2>
+
+        <!-- Grid de hábitos -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (habit of pendingHabits(); track habit.id) {
+            <app-habit-card [habit]="habit" (toggleComplete)="onToggleHabit($event)"
+                (editHabit)="openEditHabitModal($event)"></app-habit-card>
+            }
+            @empty {
+            <div class="col-span-full text-center py-12">
+                <p class="text-gray-500">No tienes hábitos pendientes.</p>
+                <p class="text-sm text-gray-400 mt-2">¡Crea un nuevo hábito o completa los que tienes!</p>
+            </div>
+            }
+        </div>
+
+        <h2 class="mt-5 text-xl font-bold text-gray-900 mb-4">Completado hoy <span
+                class="text-gray-400 font-normal text-base ml-1">{{ completedHabits().length }}</span></h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @for (habit of completedHabits(); track habit.id) {
+            <app-habit-card [habit]="habit" (toggleComplete)="onToggleHabit($event)"
+                (editHabit)="openEditHabitModal($event)"></app-habit-card>
+            }
+            @empty {
+            <div class="col-span-full text-center py-12">
+                <p class="text-gray-500">No tienes hábitos completados aún.</p>
+                <p class="text-sm text-gray-400 mt-2">¡Completa tus hábitos para empezar!</p>
+            </div>
+            }
+        </div>
+
+    </div>
 
     <!-- FAB para móvil -->
     <button

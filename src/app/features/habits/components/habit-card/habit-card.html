@@ -1,0 +1,76 @@
+<div class="flex items-center gap-4 bg-white rounded-2xl p-4 transition-all border border-gray-100"
+    [class.opacity-60]="habit.completado" [class.hover:shadow-md]="!habit.completado">
+
+    <!-- Icono circular con color del hábito + overlay de edición -->
+    <div class="group relative flex-shrink-0 w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl transition-all cursor-pointer"
+        [style.background-color]="habit.completado ? '#F3F4F6' : habit.color" [class.!text-gray-400]="habit.completado"
+        (click)="onEdit()">
+        <span [innerHTML]="getIconSvg()" class="transition-opacity group-hover:opacity-0"></span>
+        <!-- Icono de lápiz que aparece en hover -->
+        <div
+            class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                [class.text-gray-600]="habit.completado" [class.text-white]="!habit.completado">
+                <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                <path d="m15 5 4 4" />
+            </svg>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="flex-1 min-w-0">
+        <!-- Nombre del hábito y badge de frecuencia -->
+        <div class="flex items-center gap-2 mb-1">
+            <h3 class="font-semibold text-lg truncate transition-all" [class.text-gray-900]="!habit.completado"
+                [class.text-gray-400]="habit.completado">
+                {{ habit.nombre }}
+            </h3>
+            <span class="flex-shrink-0 text-[10px] font-semibold tracking-wider px-2 py-0.5 rounded-full uppercase"
+                [class.bg-blue-100]="!habit.completado" [class.text-blue-600]="!habit.completado"
+                [class.bg-gray-100]="habit.completado" [class.text-gray-400]="habit.completado">
+                {{ habit.frecuencia === 'diaria' ? 'Diario' : habit.frecuencia === 'semanal' ? 'Semanal' : 'Mensual' }}
+            </span>
+        </div>
+
+        <!-- Badge de racha -->
+        <div class="flex items-center gap-1.5 text-sm">
+            @if (habit.completado) {
+            <!-- Mostrar "¡Bien hecho!" cuando está completado -->
+            <svg class="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="text-green-600 font-medium">¡Bien hecho!</span>
+            } @else {
+            <!-- Mostrar racha cuando está pendiente -->
+            @if (habit.racha_actual > 0) {
+            <!-- Icono de fuego 🔥 -->
+            <svg class="w-4 h-4 text-orange-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="text-gray-600 font-medium">Racha de {{ habit.racha_actual }} días</span>
+            } @else {
+            <!-- Si no hay racha -->
+            <svg class="w-4 h-4 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                    clip-rule="evenodd" />
+            </svg>
+            <span class="text-gray-400 font-medium">Comienza tu racha</span>
+            }
+            }
+        </div>
+    </div>
+
+    <!-- Checkbox para completar -->
+    <div class="flex-shrink-0">
+        <input type="checkbox" [checked]="habit.completado" (click)="onToggleComplete($event)" class="checkbox checkbox-lg rounded-full border-2 border-gray-300 
+             [--chkbg:theme(colors.green.500)] [--chkfg:white] 
+             hover:border-green-500 transition-colors cursor-pointer" />
+    </div>
+
+</div>
