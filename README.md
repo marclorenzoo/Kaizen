@@ -1,59 +1,111 @@
-# Kaizen
+# 🧠 Task & Habit Tracker App
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+Aplicación web de productividad inspirada en Trello que permite gestionar tareas y realizar seguimiento de hábitos diarios. Construida con Angular 19 y Supabase, enfocada en buenas prácticas, arquitectura escalable y experiencia moderna.
 
-## Development server
+---
 
-To start a local development server, run:
+## 🚀 Descripción
+
+Esta aplicación permite a los usuarios:
+
+- Crear, editar y completar tareas tipo tablero
+- Organizar su flujo de trabajo de forma visual
+- Hacer seguimiento de hábitos diarios (habit tracker)
+- Autenticarse de forma segura mediante JWT con Supabase
+
+El proyecto está diseñado no solo como una app funcional, sino como una demostración de arquitectura frontend profesional.
+
+---
+
+## 🛠️ Tecnologías utilizadas
+
+- **Angular 19**
+- **Tailwind CSS**
+- **DaisyUI**
+- **Supabase (Auth + Database)**
+- **RxJS**
+
+---
+
+## 🧩 Características técnicas clave
+
+El proyecto destaca por aplicar buenas prácticas modernas de Angular:
+
+- 🧱 **Arquitectura modular**
+- ⚡ **Lazy Loading** para mejorar el rendimiento
+- 🔐 **Guards de autenticación**
+- 🔄 **Interceptors** para:
+  - Gestión de tokens (JWT)
+  - Manejo global de errores
+- 📡 **Uso avanzado de RxJS** (más allá de simples `subscribe`)
+- 📝 **Formularios reactivos**
+- 🧠 **Manejo de estado** (simple pero bien estructurado)
+
+---
+
+## ▶️ Cómo ejecutar el proyecto
+
+1. Clonar el repositorio:
+
+```bash
+git clone https://github.com/tu-usuario/tu-repo.git
+cd tu-repo
+```
+
+2. Instalar dependencias:
+
+```bash
+npm install
+```
+
+3. Configurar variables de entorno:
+
+Crea el archivo `environment.ts`:
+
+```ts
+export const environment = {
+  production: false,
+  supabaseUrl: 'TU_SUPABASE_URL',
+  supabaseKey: 'TU_SUPABASE_KEY'
+};
+```
+
+4. Ejecutar la aplicación:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+5. Abrir en el navegador:
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+```
+http://localhost:4200
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 🧼 Buenas prácticas
 
-## Building
+- Código limpio y mantenible
+- Separación de responsabilidades
+- Escalabilidad en mente
+- Reutilización de componentes
+- Tipado fuerte con TypeScript
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 📌 Estado del proyecto
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+🚧 En desarrollo / mejora continua
 
-## Running unit tests
+---
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+## 🤝 Contribuciones
 
-```bash
-ng test
-```
+Las contribuciones son bienvenidas. Puedes abrir issues o pull requests.
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 📄 Licencia
 
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT
