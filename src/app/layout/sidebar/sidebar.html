@@ -86,13 +86,9 @@
             <!-- Avatar -->
             <div
                 class="w-10 h-10 rounded-lg overflow-hidden bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
-                @if (user.user_metadata['avatar_url']) {
-                <img [src]="user.user_metadata['avatar_url']" alt="User avatar" class="w-full h-full object-cover" />
-                } @else {
-                <span class="text-white font-semibold text-sm">
-                    {{ (user.user_metadata['username'] || user.email || 'U')[0].toUpperCase() }}
-                </span>
-                }
+                <img [src]="user.user_metadata['avatar_url'] || 'assets/images/default-pfp.jpg'" alt="User avatar"
+                    class="w-full h-full object-cover"
+                    (error)="$any($event.target).src = 'assets/images/default-pfp.jpg'" />
             </div>
 
             <!-- User info -->

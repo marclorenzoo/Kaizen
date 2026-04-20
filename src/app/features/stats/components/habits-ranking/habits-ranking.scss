@@ -1,0 +1,8 @@
+.habit-rank-item {
+    padding: 0.5rem 0;
+
+    &:not(:last-child) {
+        border-bottom: 1px solid #f3f4f6;
+        padding-bottom: 1rem;
+    }
+}

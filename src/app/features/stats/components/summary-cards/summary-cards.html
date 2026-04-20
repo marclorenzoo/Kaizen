@@ -1,0 +1,16 @@
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    @for (card of cards; track card.key) {
+    <div
+        class="bg-white rounded-xl shadow-sm border border-gray-100 p-5 hover:shadow-md transition-shadow duration-200">
+        <div class="flex items-center gap-3 mb-3">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" [class]="card.iconBg">
+                <i [class]="card.icon" class="text-lg" [style.color]="'inherit'"></i>
+            </div>
+        </div>
+        <div class="text-2xl font-bold text-gray-900">
+            {{ getValue(card.key) }}{{ card.suffix || '' }}
+        </div>
+        <div class="text-sm text-gray-500 mt-1">{{ card.label }}</div>
+    </div>
+    }
+</div>

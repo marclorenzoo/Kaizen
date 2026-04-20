@@ -903,4 +903,112 @@ export class HabitsService {
       return 0;
     }
   }
+
+  // ============================================
+  // RESET POR PERÍODO
+  // ============================================
+
+  /**
+   * Comprueba si una fecha cae en el período actual según la frecuencia del hábito.
+   * - diaria:  misma fecha que hoy
+   * - semanal: misma semana ISO (lunes – domingo) que hoy
+   * - mensual: mismo mes y año que hoy
+   */
+  private isCompletionCurrentForPeriod(fechaCompletado: string, frecuencia: HabitFrequency): boolean {
+    const today = new Date();
+    const completed = new Date(fechaCompletado + 'T00:00:00'); // evitar problemas de zona horaria
+
+    const todayStr = today.toISOString().split('T')[0];
+
+    if (frecuencia === 'diaria') {
+      return fechaCompletado === todayStr;
+    }
+
+    if (frecuencia === 'semanal') {
+      // Calcular el lunes de la semana de cada fecha
+      const getMondayOf = (d: Date): string => {
+        const day = d.getDay(); // 0=dom, 1=lun, ...
+        const diff = (day === 0 ? -6 : 1 - day); // ajustar al lunes
+        const monday = new Date(d);
+        monday.setDate(d.getDate() + diff);
+        return monday.toISOString().split('T')[0];
+      };
+      return getMondayOf(completed) === getMondayOf(today);
+    }
+
+    if (frecuencia === 'mensual') {
+      return (
+        completed.getFullYear() === today.getFullYear() &&
+        completed.getMonth() === today.getMonth()
+      );
+    }
+
+    return false;
+  }
+
+  /**
+   * Resetea el campo `completado` de los hábitos cuyo período ya expiró.
+   * Debe llamarse al cargar la lista de hábitos.
+   */
+  async resetExpiredHabits(): Promise<void> {
+    try {
+      const user = this.supabaseService.currentUserValue;
+      if (!user) return;
+
+      // 1. Obtener hábitos marcados como completados
+      const { data: completedHabits, error: habitsError } = await this.supabaseService
+        .getClient()
+        .from('habitos')
+        .select('id, frecuencia')
+        .eq('usuario_id', user.id)
+        .eq('activo', true)
+        .eq('completado', true);
+
+      if (habitsError || !completedHabits || completedHabits.length === 0) return;
+
+      // 2. Para cada hábito, obtener la última fecha de completado
+      const habitsToReset: string[] = [];
+
+      for (const habit of completedHabits) {
+        const { data: lastEntry } = await this.supabaseService
+          .getClient()
+          .from('habitos_completados')
+          .select('fecha_completado')
+          .eq('habito_id', habit.id)
+          .eq('usuario_id', user.id)
+          .order('fecha_completado', { ascending: false })
+          .limit(1)
+          .single();
+
+        if (!lastEntry) {
+          // No hay registro → marcar para resetear
+          habitsToReset.push(habit.id);
+          continue;
+        }
+
+        const stillValid = this.isCompletionCurrentForPeriod(
+          lastEntry.fecha_completado,
+          habit.frecuencia as HabitFrequency
+        );
+
+        if (!stillValid) {
+          habitsToReset.push(habit.id);
+        }
+      }
+
+      // 3. Resetear en bloque los hábitos expirados
+      if (habitsToReset.length > 0) {
+        await this.supabaseService
+          .getClient()
+          .from('habitos')
+          .update({ completado: false })
+          .in('id', habitsToReset)
+          .eq('usuario_id', user.id);
+
+        console.log(`[HabitsService] ${habitsToReset.length} hábito(s) reseteado(s) por período expirado.`);
+      }
+    } catch (error) {
+      console.error('Error inesperado al resetear hábitos expirados:', error);
+    }
+  }
 }

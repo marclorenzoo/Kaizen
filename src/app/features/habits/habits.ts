@@ -29,10 +29,9 @@ export class Habits {
   }
 
   async loadHabits() {
+    await this.habitService.resetExpiredHabits();
     const allHabits = await this.habitService.getAllHabits();
     this.habits.set(allHabits);
-    console.log('Hábitos cargados:', allHabits);
-
   }
 
   openCreateHabitModal() {

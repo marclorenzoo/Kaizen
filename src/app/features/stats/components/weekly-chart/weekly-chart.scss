@@ -1,0 +1,84 @@
+.chart-container {
+    padding: 0.5rem 0;
+}
+
+.chart-bars {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 0.75rem;
+    height: 180px;
+    padding-bottom: 2rem;
+    position: relative;
+}
+
+.bar-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    position: relative;
+}
+
+.bar-wrapper {
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+    flex: 1;
+    width: 100%;
+    justify-content: center;
+    position: relative;
+
+    &:hover .bar-tooltip {
+        opacity: 1;
+        transform: translateX(-50%) translateY(-4px);
+    }
+}
+
+.bar-tooltip {
+    position: absolute;
+    top: -28px;
+    left: 50%;
+    transform: translateX(-50%) translateY(0);
+    background: #1f2937;
+    color: white;
+    font-size: 0.65rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.bar {
+    width: 12px;
+    min-height: 4px;
+    border-radius: 4px 4px 2px 2px;
+    transition: height 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.bar-tasks {
+    background: linear-gradient(to top, #3b82f6, #60a5fa);
+}
+
+.bar-habits {
+    background: linear-gradient(to top, #10b981, #34d399);
+}
+
+.bar-empty {
+    width: 12px;
+    height: 4px;
+    background: #e5e7eb;
+    border-radius: 2px;
+}
+
+.bar-label {
+    position: absolute;
+    bottom: -24px;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    font-weight: 500;
+}

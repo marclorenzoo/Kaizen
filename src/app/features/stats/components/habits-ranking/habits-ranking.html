@@ -1,0 +1,41 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+    <h3 class="text-lg font-bold text-gray-900 mb-4">Rendimiento de Hábitos</h3>
+
+    @if (rankings.length > 0) {
+    <div class="space-y-4">
+        @for (habit of rankings; track habit.habitoId; let i = $index) {
+        <div class="habit-rank-item">
+            <div class="flex items-center justify-between mb-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg flex items-center justify-center"
+                        [style.backgroundColor]="habit.color + '20'" [style.color]="habit.color">
+                        <span [innerHTML]="getIconSvg(habit.icono)"></span>
+                    </div>
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">{{ habit.nombre }}</span>
+                        <div class="flex items-center gap-2 text-xs text-gray-400">
+                            <span>{{ habit.completados }} completados</span>
+                            <span>·</span>
+                            <span>🔥 {{ habit.rachaActual }}</span>
+                        </div>
+                    </div>
+                </div>
+                <span class="text-sm font-bold" [style.color]="habit.color">{{ habit.porcentaje }}%</span>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                <div class="h-full rounded-full transition-all duration-700 ease-out" [style.width.%]="habit.porcentaje"
+                    [style.backgroundColor]="habit.color">
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+    } @else {
+    <div class="text-center py-8">
+        <div class="text-3xl mb-2">📊</div>
+        <p class="text-gray-400 text-sm">Aún no tienes hábitos para rankear</p>
+        <p class="text-gray-300 text-xs mt-1">Crea hábitos y complétalos para ver tu progreso</p>
+    </div>
+    }
+</div>

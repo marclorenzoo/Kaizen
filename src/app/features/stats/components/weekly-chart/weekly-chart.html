@@ -1,0 +1,51 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+    <div class="flex items-center justify-between mb-5">
+        <h3 class="text-lg font-bold text-gray-900">Actividad Semanal</h3>
+        <div class="flex items-center gap-4 text-xs text-gray-500">
+            <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                Tareas
+            </div>
+            <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                Hábitos
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-bars">
+            @for (day of data; track day.fecha) {
+            <div class="bar-group">
+                <div class="bar-wrapper">
+                    <!-- Tooltip -->
+                    <div class="bar-tooltip">
+                        {{ getTotalForDay(day) }} actividades
+                    </div>
+                    <!-- Barra de tareas -->
+                    @if (day.tareas > 0) {
+                    <div class="bar bar-tasks" [style.height.%]="getBarHeight(day.tareas)">
+                    </div>
+                    }
+                    <!-- Barra de hábitos -->
+                    @if (day.habitos > 0) {
+                    <div class="bar bar-habits" [style.height.%]="getBarHeight(day.habitos)">
+                    </div>
+                    }
+                    <!-- Placeholder si no hay datos -->
+                    @if (day.tareas === 0 && day.habitos === 0) {
+                    <div class="bar bar-empty"></div>
+                    }
+                </div>
+                <span class="bar-label">{{ day.dia }}</span>
+            </div>
+            }
+        </div>
+    </div>
+
+    @if (data.length === 0) {
+    <div class="text-center py-8">
+        <p class="text-gray-400 text-sm">No hay datos de actividad esta semana</p>
+    </div>
+    }
+</div>

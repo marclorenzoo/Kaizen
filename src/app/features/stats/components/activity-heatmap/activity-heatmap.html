@@ -1,0 +1,60 @@
+<div class="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-bold text-gray-900">Mapa de Actividad {{ year }}</h3>
+        <div class="flex items-center gap-1.5 text-xs text-gray-400">
+            <span>Menos</span>
+            <span class="heatmap-cell" [style.backgroundColor]="getCellColor(0)"></span>
+            <span class="heatmap-cell" [style.backgroundColor]="getCellColor(1)"></span>
+            <span class="heatmap-cell" [style.backgroundColor]="getCellColor(2)"></span>
+            <span class="heatmap-cell" [style.backgroundColor]="getCellColor(3)"></span>
+            <span class="heatmap-cell" [style.backgroundColor]="getCellColor(4)"></span>
+            <span>Más</span>
+        </div>
+    </div>
+
+    @if (weeks.length > 0) {
+    <div class="heatmap-scroll">
+        <!-- Month labels -->
+        <div class="heatmap-months">
+            <div class="heatmap-day-labels-spacer"></div>
+            @for (month of monthLabels; track month.label + month.col) {
+            <span class="heatmap-month-label" [style.gridColumn]="month.col + 1">
+                {{ month.label }}
+            </span>
+            }
+        </div>
+
+        <div class="heatmap-body">
+            <!-- Day labels -->
+            <div class="heatmap-day-labels">
+                <span></span>
+                <span>Lun</span>
+                <span></span>
+                <span>Mié</span>
+                <span></span>
+                <span>Vie</span>
+                <span></span>
+            </div>
+
+            <!-- Grid -->
+            <div class="heatmap-grid">
+                @for (week of weeks; track $index) {
+                <div class="heatmap-week">
+                    @for (day of week.days; track $index) {
+                    <div class="heatmap-cell"
+                        [style.backgroundColor]="day.fecha ? getCellColor(day.level) : 'transparent'"
+                        [title]="getTooltip(day)">
+                    </div>
+                    }
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+    } @else {
+    <div class="text-center py-8">
+        <div class="text-3xl mb-2">📅</div>
+        <p class="text-gray-400 text-sm">No hay datos de actividad para este año</p>
+    </div>
+    }
+</div>
